@@ -12,4 +12,44 @@ public class Person {
 	// (./docs/database_schema.md) to ensure each column in the People table
 	// has an attribute in the model. (DELETE THIS COMMENT WHEN DONE)
 
+	private int id;
+	private String name;
+	private int birth;
+	
+	public Person(int id, String name, int birth) {
+		this.id = id;
+		this.name = name;
+		this.birth = birth;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getBirth() {
+		return birth;
+	}
+
+	public void setBirth(int birth) {
+		this.birth = birth;
+	}
+
+	@Override
+	public String toString() {
+		return "Person [id=" + id + ", name=" + name + ", birth=" + birth + "]";
+	}
+	
+	
 }
