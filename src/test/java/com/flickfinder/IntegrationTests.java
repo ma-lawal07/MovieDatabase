@@ -78,6 +78,26 @@ class IntegrationTests {
 				.body("title", equalTo("The Shawshank Redemption"))
 				.body("year", equalTo(1994));
 	}
+	
+	@Test
+	void retrieves_a_list_of_all_people() {
+		given().when().get(baseURL + "/person").then().assertThat().statusCode(200). // Assuming a successful
+												// response returns HTTP
+												// 200
+				body("id", hasItems(1, 2, 3, 4, 5))
+				.body("Name", hasItems("The Shawshank Redemption", "The Godfather",
+						"The Godfather: Part II", "The Dark Knight", "12 Angry Men"))
+				.body("Birth", hasItems(1985, 1972, 1974, 2008, 1957));
+	}
+	
+	void retrieves_a_single_person_by_id() {
+		given().when().get(baseURL + "/person/1").then().assertThat().statusCode(200). //Asumming a sucessful
+		                                           // response returns HTTP
+		                                           // 200
+		body("id", equalTo(1))
+		.body("Name", equalTo("The Shawshank Redemption"))
+		.body("Birth", equalTo(1994));
+	}
 
 	/**
 	 * Tears down the application after each test.
