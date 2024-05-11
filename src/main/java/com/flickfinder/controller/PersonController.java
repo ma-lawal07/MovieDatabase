@@ -1,8 +1,10 @@
 package com.flickfinder.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.flickfinder.dao.PersonDAO;
+import com.flickfinder.model.Movie;
 import com.flickfinder.model.Person;
 
 import io.javalin.http.Context;
@@ -21,16 +23,32 @@ public class PersonController {
 		this.personDAO = personDAO;
 	}
 	
+	/**
+	 * Retrieves a list of Person objects, with an optional limit parameter.
+	 * 
+	 * @param ctx the Context object
+	 */
+	
 	public void getAllPeople(Context ctx) {
+		int limit = 50;
+		String limitStr = ctx.queryParam("limit");
+		if(limitStr != null && !limitStr.isEmpty()) {
+			limit = Integer.parseInt(limitStr);
+		}
 		try {
-			ctx.json(personDAO.getAllPeople());
+			List<Person> people = personDAO.getAllPeople(limit);
+			ctx.json(people);
 		}catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("Database error");
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Retrieves a Person object with the specified ID.
+	 * 
+	 * @param ctx the Context object
+	 */
 	public void getPersonById(Context ctx) {
 
 		int id = Integer.parseInt(ctx.pathParam("id"));
@@ -48,7 +66,24 @@ public class PersonController {
 			e.printStackTrace();
 		}
 	}
-
 	
+	/**
+	 * Retrieves a list of Movie objects that a Person has starred in.
+	 * 
+	 * @param ctx the Context object
+	 */
+		
+	public void getMoviesStarringPerson(Context ctx) {
+	    int personId = Integer.parseInt(ctx.pathParam("id"));
+	    try {
+	        List<Movie> movies = personDAO.getMoviesStarringPerson(personId);
+	        ctx.json(movies);
+	    } catch (SQLException e) {
+	        ctx.status(500);
+	        ctx.result("Database error");
+	        e.printStackTrace();
+	    }
+	
+	}
 
 }

@@ -11,12 +11,21 @@ import org.junit.jupiter.api.Test;
  */
 
 class PersonTest {
+	/**
+	 * The person object to be tested.
+	 */
   private Person person;
-  
+  /**
+	 * Set up the person object before each test.
+	 *
+	 */
   
   public void setUp() {
 	  person = new Person(1, "Jack", 1985);
   }
+  /**
+	 * Test the person object is created with the correct values.
+	 */
   
   @Test
 	public void testPersonCreated() {
@@ -24,6 +33,9 @@ class PersonTest {
 		assertEquals("Jack", person.getName());
 		assertEquals(1985, person.getBirth());
 	}
+  /**
+	 * Test the person object is created with the correct values.
+	 */
   @Test
 	public void testPSetters() {
 		person.setId(2);

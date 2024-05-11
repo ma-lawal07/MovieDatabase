@@ -1,9 +1,12 @@
 package com.flickfinder.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.flickfinder.dao.MovieDAO;
 import com.flickfinder.model.Movie;
+import com.flickfinder.model.MovieRating;
+import com.flickfinder.model.Person;
 
 import io.javalin.http.Context;
 
@@ -45,8 +48,14 @@ public class MovieController {
 	 * @param ctx the Javalin context
 	 */
 	public void getAllMovies(Context ctx) {
+		int limit = 50;
+		String limitStr = ctx.queryParam("limit");
+		if (limitStr != null && !limitStr.isEmpty()) {
+			limit = Integer.parseInt(limitStr);
+		}
 		try {
-			ctx.json(movieDAO.getAllMovies());
+			List<Movie> movies = movieDAO.getAllMovies(limit);
+			ctx.json(movies);
 		} catch (SQLException e) {
 			ctx.status(500);
 			ctx.result("Database error");
@@ -76,5 +85,50 @@ public class MovieController {
 			e.printStackTrace();
 		}
 	}
-
+	/*
+	 * Returns the list of people who were in a movie
+	 * 
+	 * @param ctx the javalin context
+	 * */
+	
+	
+	public void getPeopleByMovieId(Context ctx) {
+		int movieId = Integer.parseInt(ctx.pathParam("id"));
+		try {
+			List<Person> people = movieDAO.getPeopleByMovieId(movieId);
+			ctx.json(people);
+		} catch (SQLException e) {
+			ctx.status(500);
+			ctx.result("Database error");
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Returns an array list of movie ratings by year.
+	 * */
+	
+	public void getRatingsByYear(Context ctx) {
+        int year = Integer.parseInt(ctx.pathParam("year"));
+        int limit = 50;
+        String limitStr = ctx.queryParam("limit");
+        if (limitStr != null && !limitStr.isEmpty()) {
+            limit = Integer.parseInt(limitStr);
+        }
+        int votes = 1000;
+        String votesStr = ctx.queryParam("votes");
+        if (votesStr != null && !votesStr.isEmpty()) {
+            votes = Integer.parseInt(votesStr);
+        }
+        try {
+            List<MovieRating> movies = movieDAO.getRatingsByYear(year, limit, votes);
+            ctx.result(movies.stream().map(m -> m.getId() + "|" + m.getTitle() + "|" + m.getRating() + "|" + m.getVotes() + "|" + m.getYear()).reduce((a, b) -> a + "," + b).orElse(""));
+        } catch (SQLException e) {
+            ctx.status(500);
+            ctx.result("Database error");
+            e.printStackTrace();
+        }
+    }
+	
+	
 }

@@ -1,6 +1,7 @@
 package com.flickfinder.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
@@ -58,7 +59,7 @@ class MovieDAOTest {
 	@Test
 	void testGetAllMovies() {
 		try {
-			List<Movie> movies = movieDAO.getAllMovies();
+			List<Movie> movies = movieDAO.getAllMovies(10);
 			assertEquals(5, movies.size());
 		} catch (SQLException e) {
 			fail("SQLException thrown");
@@ -88,7 +89,7 @@ class MovieDAOTest {
 	@Test
 	void testGetMovieByIdInvalidId() {
 		// write an assertThrows for a SQLException
-
+		SQLException exception = assertThrows(SQLException.class, () -> movieDAO.getMovieById(1000));
 		try {
 			Movie movie = movieDAO.getMovieById(1000);
 			assertEquals(null, movie);

@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flickfinder.model.Movie;
 import com.flickfinder.model.Person;
 import com.flickfinder.util.Database;
 
@@ -43,10 +44,11 @@ public class PersonDAO {
 	 * @return a list of all movies in the database
 	 * @throws SQLException if a database error occurs
 	 */
-	public List<Person> getAllPeople() throws SQLException {
+	public List<Person> getAllPeople(int limit) throws SQLException {
 		List<Person> person = new ArrayList<>();
+		String limitStr = limit > 0 ? "LIMIT" + limit : "";
 
-		Statement statement = connection.createStatement();
+		try (Statement statement = connection.createStatement()) {
 		
 		// I've set the limit to 10 for development purposes - you should do the same.
 		ResultSet rs = statement.executeQuery("select * from people LIMIT 20");
@@ -55,8 +57,17 @@ public class PersonDAO {
 			person.add(new Person(rs.getInt("id"), rs.getString("name"), rs.getInt("birth")));
 		}
 
+		}
 		return person;
 	}
+	
+	/**
+	 * Retrieves a Person object with the specified ID.
+	 * 
+	 * @param id the ID of the person
+	 * @return a Person object, or null if no person with the specified ID exists
+	 * @throws SQLException if a database error occurs
+	 */
 	
 	public Person getPersonById(int id) throws SQLException {
 
@@ -77,5 +88,31 @@ public class PersonDAO {
 	}
 	
 	
+	/**
+	 * Retrieves a list of movies starring a specific person.
+	 * 
+	 * @param personId the ID of the person
+	 * @return a list of movies starring the person
+	 * @throws SQLException if a database error occurs
+	 */
 
+
+
+	public List<Movie> getMoviesStarringPerson(int personId) throws SQLException {
+	    List<Movie> movies = new ArrayList<>();
+	    String query = "SELECT m.id, m.title, m.year FROM movies m " +
+	                    "JOIN stars s ON m.id = s.movie_id " +
+	                    "WHERE s.person_id = ?;";
+	    PreparedStatement statement = connection.prepareStatement(query);
+	    statement.setInt(1, personId);
+	    ResultSet resultSet = statement.executeQuery();
+	    while (resultSet.next()) {
+	        int movieId = resultSet.getInt("id");
+	        String title = resultSet.getString("title");
+	        int year = resultSet.getInt("year");
+	        Movie movie = new Movie(movieId, title, year);
+	        movies.add(movie);
+	    }
+	    return movies;
+	}
 }

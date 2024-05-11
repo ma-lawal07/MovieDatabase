@@ -85,8 +85,8 @@ class IntegrationTests {
 												// response returns HTTP
 												// 200
 				body("id", hasItems(1, 2, 3, 4, 5))
-				.body("Name", hasItems("The Shawshank Redemption", "The Godfather",
-						"The Godfather: Part II", "The Dark Knight", "12 Angry Men"))
+				.body("Name", hasItems("John Mary", "Zendeya",
+						"Tom holland", "Leonardo Dicaprio", "Tom cruise"))
 				.body("Birth", hasItems(1985, 1972, 1974, 2008, 1957));
 	}
 	
@@ -95,7 +95,7 @@ class IntegrationTests {
 		                                           // response returns HTTP
 		                                           // 200
 		body("id", equalTo(1))
-		.body("Name", equalTo("The Shawshank Redemption"))
+		.body("Name", equalTo("John Mary"))
 		.body("Birth", equalTo(1994));
 	}
 

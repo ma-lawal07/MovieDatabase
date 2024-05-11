@@ -1,6 +1,7 @@
 package com.flickfinder.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
@@ -22,6 +23,13 @@ class PersonDAOTest {
 	private PersonDAO personDAO;
 	
 	Seeder seeder;
+	/**
+	 * Sets up the database connection and creates the tables.
+	 * We are using an in-memory database for testing purposes.
+	 * This gets passed to the Database class to get a connection to the database.
+	 * As it's a singleton class, the entire application will use the same
+	 * connection.
+	 */
 	
 	@BeforeEach
 	void setUp() {
@@ -31,35 +39,49 @@ class PersonDAOTest {
 		personDAO = new PersonDAO();
 
 	}
+	/**
+	 * Tests the getAllPeople method.
+	 * We expect to get a list of all people in the database.
+	 * We have seeded the database with 50 people, so we expect to get 50 people back.
+	 * At this point, we avoid checking the actual content of the list.
+	 */
 	
 	@Test
-	void testGetAllMovies() {
+	void testGetAllPeople() {
 		try {
-			List<Person> person = personDAO.getAllPeople();
-			assertEquals(5, person.size());
+			List<Person> person = personDAO.getAllPeople(50);
+			assertEquals(50, person.size());
 		} catch (SQLException e) {
 			fail("SQLException thrown");
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * Tests the getPersonById method.
+	 * We expect to get the person with the specified id.
+	 */
 	
 	@Test
 	void testGetPersonById() {
 		Person person;
 		try {
 			person = personDAO.getPersonById(1);
-			assertEquals("The Shawshank Redemption", person.getName());
+			assertEquals("Tim Robbins", person.getName());
 		} catch (SQLException e) {
 			fail("SQLException thrown");
 			e.printStackTrace();
 		}
 	}
+	/**
+	 * Tests the getMovieById method with an invalid id. Null should be returned.
+	 */
 	
 	@Test
 	void testGetPersonByIdInvalidId() {
 		// write an assertThrows for a SQLException
-
-		try {
+		SQLException exception = assertThrows(SQLException.class, () -> personDAO.getPersonById(1000));
+      try {
 			Person person = personDAO.getPersonById(1000);
 			assertEquals(null, person);
 		} catch (SQLException e) {

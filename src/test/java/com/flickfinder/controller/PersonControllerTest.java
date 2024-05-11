@@ -34,24 +34,39 @@ class PersonControllerTest {
 		// We create an instance of the MovieController class and pass the mock object
 		personController = new PersonController(personDAO);
 	}
+  /**
+	 * Tests the getAllPeople method.
+	 * We expect to get a list of all people in the database.
+	 */
   
   @Test
 	void testGetAllPeople() {
 		personController.getAllPeople(ctx);
 		try {
-			verify(personDAO).getAllPeople();
+			verify(personDAO).getAllPeople(50);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
   
+  /**
+	 * Test that the controller returns a 500 status code when a database error
+	 * occurs
+	 * 
+	 * @throws SQLException
+	 */
   @Test
 	void testThrows500ExceptionWhenGetAllDatabaseError() throws SQLException {
-		when(personDAO.getAllPeople()).thenThrow(new SQLException());
+		when(personDAO.getAllPeople(50)).thenThrow(new SQLException());
 		personController.getAllPeople(ctx);
 		verify(ctx).status(500);
 	}
   
+  /**
+	 * Tests the getPeopleById method.
+	 * We expect to get the people with the specified id.
+	 */
+
   @Test
 	void testGetPersonById() {
 		when(ctx.pathParam("id")).thenReturn("1");
@@ -62,6 +77,12 @@ class PersonControllerTest {
 			e.printStackTrace();
 		}
 	}
+  /**
+	 * Test a 500 status code is returned when a database error occurs.
+	 * 
+	 * @throws SQLException
+	 */
+
   
   @Test
 	void testThrows500ExceptionWhenGetByIdDatabaseError() throws SQLException {
@@ -70,6 +91,13 @@ class PersonControllerTest {
 		personController.getPersonById(ctx);
 		verify(ctx).status(500);
 	}
+  /**
+	 * Test that the controller returns a 404 status code when a movie is not found
+	 * or
+	 * database error.
+	 * 
+	 * @throws SQLException
+	 */
   
   @Test
 	void testThrows404ExceptionWhenNoPersonFound() throws SQLException {
