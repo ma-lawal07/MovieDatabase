@@ -117,16 +117,19 @@ public class MovieDAO {
 		List<MovieRating> movies = new ArrayList<>();
 		String limitStr = limit > 0 ? " LIMIT " + limit : "";
 		try (PreparedStatement ps = connection.prepareStatement(
-				"SELECT m.id, m.title, r.rating, r.votes, m.year FROM movies m JOIN ratings r ON m.id = r.movie_id WHERE m.year = ? AND r.votes > ?"
+				"SELECT m.id, m.title, r.rating, r.votes, m.year FROM movies m JOIN ratings r ON m.id = r.movie_id WHERE m.year = ? AND r.votes > ? ORDER BY r.rating DESC"
 						+ limitStr)) {
 			ps.setInt(1, year);
 			ps.setInt(2, votes);
-			ResultSet rs = ps.executeQuery();
+			try (ResultSet rs = ps.executeQuery()){
 			while (rs.next()) {
 				movies.add(new MovieRating(rs.getInt("id"), rs.getString("title"), rs.getInt("year"),
 						rs.getDouble("rating"), rs.getInt("votes")));
 			}
 		}
+	} catch (SQLException e) {
+		System.err.println("Error fetching movie rating: " + e.getMessage());
+	}
 		return movies;
 	}
 
