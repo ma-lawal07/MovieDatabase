@@ -48,7 +48,7 @@ public class MovieController {
 	 * @param ctx the Javalin context
 	 */
 	public void getAllMovies(Context ctx) {
-		int limit = 50;
+		int limit = 50 ;
 		String limitStr = ctx.queryParam("limit");
 		if (limitStr != null && !limitStr.isEmpty()) {
 			limit = Integer.parseInt(limitStr);

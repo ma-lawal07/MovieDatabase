@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,12 +44,11 @@ public class MovieDAO {
 
 	public List<Movie> getAllMovies(int limit) throws SQLException {
 		List<Movie> movies = new ArrayList<>();
-		String limitStr = limit > 0 ? "LIMIT" + limit : "";
 
-		try (Statement statement = connection.createStatement()) {
+		try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM movies LIMIT ?")) {
+			statement.setInt(1, limit > 0 ? limit : Integer.MAX_VALUE);
 
-			// I've set the limit to 10 for development purposes - you should do the same.
-			ResultSet rs = statement.executeQuery("select * from movies LIMIT 50");
+			ResultSet rs = statement.executeQuery();
 
 			while (rs.next()) {
 				movies.add(new Movie(rs.getInt("id"), rs.getString("title"), rs.getInt("year")));
